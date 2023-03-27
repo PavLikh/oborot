@@ -52,6 +52,7 @@ class Garden
     public function save() {
         $data[] = $this->harvest;
         $json = json_encode($data);
-        file_put_contents('garden.txt', $json); 
+        // file_put_contents('garden.txt', $json); 
+        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/garden.txt', $json); 
     }
 }
