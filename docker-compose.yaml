@@ -1,0 +1,48 @@
+version: '3.5'
+
+services:
+    # PHP fpm
+    application-backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: always
+        tty: true
+        working_dir: /var/www/application
+        env_file:
+            - .env
+        volumes:
+            - .:/var/www/application
+        networks:
+            - application-network
+        container_name: application-backend
+         
+    # Nginx Service
+    application-nginx:
+        image: nginx:alpine
+        container_name: application-nginx
+        restart: always
+        tty: true
+        environment:
+            - "APPLICATION_UPSTREAM=application-backend:9000"
+        volumes:
+            - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+            - ./docker/nginx/templates/:/etc/nginx/templates/
+            - ./public/:/var/www/application/public/
+        networks:
+            - application-network
+        ports:
+            - "80:80"
+            - "443:443"
+
+#Docker Networks
+networks:
+    application-network:
+        driver: bridge
+         
+#Docker Volumes
+volumes:
+    applicationMysqlData:
+        driver: local
+    applicationMysqlFiles:
+        driver: local
